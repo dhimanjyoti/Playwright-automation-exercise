@@ -100,7 +100,7 @@ export class SignUp {
   }
 
   async verifyAccountCreationSuccessMessage() {
-    await this.verifyAccountCreation.waitFor({ state: "visible" });
+    await this.locators.verifyAccountCreation.waitFor({ state: "visible" });
     return this.locators.verifyAccountCreation.textContent();
   }
 }

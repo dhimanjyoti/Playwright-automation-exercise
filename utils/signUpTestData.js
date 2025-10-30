@@ -42,6 +42,6 @@ export const signUpTestData = {
 
 // Centralized static text/messages
 export const EXPECTED_MESSAGES = {
-  SUCCESSFUL_CREATION: "ACCOUNT CREATED!",
+  SUCCESSFUL_CREATION: "Account Created!",
   // ... other expected application messages
 };
