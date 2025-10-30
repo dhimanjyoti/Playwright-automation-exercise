@@ -42,7 +42,7 @@ test.describe("SignUp Features", () => {
     // 1. Verify URL redirect (High-level check)
     await expect(page).toHaveURL(/account_created/);
 
-    // 2. Verify the success message content (Detailed check)
+    // 2. Verify the success message content (Detailed check) test
     const actualMessage = await signUp.verifyAccountCreationSuccessMessage();
     expect(actualMessage).toContain(EXPECTED_MESSAGES.SUCCESSFUL_CREATION);
   });
