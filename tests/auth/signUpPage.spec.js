@@ -1,49 +1,51 @@
-import { test, expect } from "@playwright/test";
-import { BasePage } from "../../pages/BasePage";
-import { SignUp } from "../../pages/SignUp";
-import { EXPECTED_MESSAGES, signUpTestData } from "../../utils/signUpTestData";
-import * as dotenv from "dotenv";
-dotenv.config({ path: "./.env", override: true });
+// tests/auth/SignUpPage.spec.js
+import { test, expect } from "../../fixtures/testFixtures";
 
-test.describe("SignUp Features", () => {
-  test("TC_001: Verify that user is able to SignUp to the Application.", async ({
+test.describe("SignUp Feature Suite", () => {
+  test("TC_001: Verify user can register, login, and delete account", async ({
+    basePage,
+    signUp,
+    data,
     page,
   }) => {
-    // create object
-    const basePage = new BasePage(page);
-    const signUp = new SignUp(page);
+    // Step 1: Navigate and open sign-up page
+    await test.step("Navigate to Automation Exercise and open Sign Up page", async () => {
+      await basePage.navigateToAutomationExercise();
+      await signUp.navigateToSignUpPage();
+      await expect(page).toHaveURL(/login/i);
+    });
 
-    // Consolidated object to pass signup/password details
-    const signUpCredentails = {
-      username: signUpTestData.MALE_USER.USERNAME,
-      emailAdress: process.env.USEREMAIL,
-    };
+    // Step 2: Fill sign-up form and create account
+    await test.step("Fill sign-up details and create account", async () => {
+      await signUp.enterSignUpCredentials({
+        username: data.username,
+        emailAddress: data.emailAddress,
+      });
 
-    // 1. Navigate and go to sign-up form
-    await basePage.navigateToAutomationExcercise();
-    await signUp.goToSignUpPage();
+      await signUp.fillAccountInformation(data.accountInfo);
+      await signUp.fillAddressInformation(data.addressInfo);
+      await signUp.selectCountry(data.addressInfo.COUNTRY);
 
-    // 2. Create the user
-    await signUp.createNewUser(signUpCredentails);
+      await signUp.createAccount();
 
-    // Consolidate the data for account creation details
-    // Merge the static MALE_USER data with the runtime secret (password)
-    const fullAccountDetails = {
-      ...signUpTestData.MALE_USER.ACCOUNT_INFO,
-      PASSWORD: process.env.PASSWORD,
-    };
+      await expect(page).toHaveURL(/account_created/i);
+      await signUp.verifyAccountCreatedMessage(data.expected.accountCreated);
+    });
 
-    // 3. Enter the remaining account and adress information
-    await signUp.createAccountInfo(fullAccountDetails);
-    await signUp.createAddressInfo(signUpTestData.MALE_USER.ADDRESS_INFO);
-    await signUp.selectCountry(signUpTestData.MALE_USER.ADDRESS_INFO.COUNTRY);
-    await signUp.createAccount();
+    // Step 3: Verify login success
+    await test.step("Verify account creation and logged-in username", async () => {
+      await signUp.clickContinueButton();
+      await signUp.verifyLoggedInUserName(data.username);
+    });
 
-    // 1. Verify URL redirect (High-level check)
-    await expect(page).toHaveURL(/account_created/);
-
-    // 2. Verify the success message content (Detailed check) test
-    const actualMessage = await signUp.verifyAccountCreationSuccessMessage();
-    expect(actualMessage).toContain(EXPECTED_MESSAGES.SUCCESSFUL_CREATION);
+    // Step 4: Delete account and verify success
+    await test.step("Delete account and verify deletion success", async () => {
+      await signUp.deleteAccount();
+      await signUp.verifyDeleteAccountSuccessMessage(
+        data.expected.accountDeleted
+      );
+      await signUp.clickContinueButton();
+      await expect(page).toHaveURL("/");
+    });
   });
 });
