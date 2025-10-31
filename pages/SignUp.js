@@ -1,44 +1,77 @@
+import { expect } from "@playwright/test";
+
+const LOAD_STATE = "domcontentloaded"; // standardize page load waits
+
 export class SignUp {
   constructor(page) {
     this.page = page;
     this.locators = {
+      // Navigation
       signUpLink: page.locator("//a[normalize-space()='Signup / Login']"),
-      userName: page.locator("[data-qa='signup-name']"),
-      userEmail: page.locator("[data-qa='signup-email']"),
+
+      // Sign-up form
+      userNameInput: page.locator("[data-qa='signup-name']"),
+      userEmailInput: page.locator("[data-qa='signup-email']"),
       signUpBtn: page.locator("[data-qa='signup-button']"),
+
+      // Account details
       selectTitle: page.locator("[data-qa='title']"),
-      userPassword: page.locator("[data-qa='password']"),
-      birthdayDate: page.locator("[data-qa='days']"),
-      birthdayMonth: page.locator("[data-qa='months']"),
-      birthdayYear: page.locator("[data-qa='years']"),
-      firstName: page.locator("[data-qa='first_name']"),
-      lastName: page.locator("[data-qa='last_name']"),
-      companyName: page.locator("[data-qa='company']"),
-      userAdress: page.locator("[data-qa='address']"),
-      userAdress2: page.locator("[data-qa='address2']"),
-      countrySelect: page.locator("[data-qa='country']"),
-      countryOptions: page.locator("[data-qa='country'] option"),
-      state: page.locator("[data-qa='state']"),
-      city: page.locator("[data-qa='city']"),
-      zipcode: page.locator("[data-qa='zipcode']"),
-      mobileNumber: page.locator("[data-qa='mobile_number']"),
+      passwordInput: page.locator("[data-qa='password']"),
+      birthDayDropdown: page.locator("[data-qa='days']"),
+      birthMonthDropdown: page.locator("[data-qa='months']"),
+      birthYearDropdown: page.locator("[data-qa='years']"),
+
+      // Address section
+      firstNameInput: page.locator("[data-qa='first_name']"),
+      lastNameInput: page.locator("[data-qa='last_name']"),
+      companyInput: page.locator("[data-qa='company']"),
+      addressLine1Input: page.locator("[data-qa='address']"),
+      addressLine2Input: page.locator("[data-qa='address2']"),
+      countryDropdown: page.locator("[data-qa='country']"),
+      stateInput: page.locator("[data-qa='state']"),
+      cityInput: page.locator("[data-qa='city']"),
+      zipcodeInput: page.locator("[data-qa='zipcode']"),
+      mobileInput: page.locator("[data-qa='mobile_number']"),
+
+      // Buttons
       createAccountBtn: page.locator("[data-qa='create-account']"),
-      verifyAccountCreation: page.locator("[data-qa='account-created'] b"),
+      continueBtn: page.locator("[data-qa='continue-button']"),
+      deleteAccountBtn: page.locator("//a[contains(.,'Delete Account')]"),
+
+      // Verification elements
+      accountCreatedMsg: page.locator("[data-qa='account-created'] b"),
+      accountDeletedMsg: page.locator("[data-qa='account-deleted'] b"),
+      loggedInUser: page.locator("//a[contains(.,'Logged in as')]/b"),
     };
   }
 
-  async goToSignUpPage() {
-    await this.locators.signUpLink.click();
+  /**
+   * Navigate to Sign Up page
+   */
+  async navigateToSignUpPage() {
+    await Promise.all([
+      this.page.waitForLoadState(LOAD_STATE),
+      this.locators.signUpLink.click(),
+    ]);
   }
 
-  async createNewUser({ username, emailAdress }) {
-    await this.locators.userName.fill(username);
-    await this.locators.userEmail.fill(emailAdress);
-    await this.locators.signUpBtn.click();
-    // await this.page.waitForLoadState("networkidle");
+  /**
+   * Fill sign up credentials (username + email)
+   */
+  async enterSignUpCredentials({ username, emailAddress }) {
+    await this.locators.userNameInput.fill(username);
+    await this.locators.userEmailInput.fill(emailAddress);
+
+    await Promise.all([
+      this.page.waitForNavigation({ waitUntil: LOAD_STATE }),
+      this.locators.signUpBtn.click(),
+    ]);
   }
 
-  async createAccountInfo({
+  /**
+   * Fill basic account information (title, password, DOB)
+   */
+  async fillAccountInformation({
     TITLE,
     PASSWORD,
     BIRTHDATE,
@@ -46,13 +79,16 @@ export class SignUp {
     BIRTHYEAR,
   }) {
     await this.locators.selectTitle.locator(`[value='${TITLE}']`).check();
-    await this.locators.userPassword.fill(PASSWORD);
-    await this.locators.birthdayDate.selectOption(BIRTHDATE.toString());
-    await this.locators.birthdayMonth.selectOption(BIRTHMONTH.toString());
-    await this.locators.birthdayYear.selectOption(BIRTHYEAR.toString());
+    await this.locators.passwordInput.fill(PASSWORD);
+    await this.locators.birthDayDropdown.selectOption(BIRTHDATE.toString());
+    await this.locators.birthMonthDropdown.selectOption(BIRTHMONTH.toString());
+    await this.locators.birthYearDropdown.selectOption(BIRTHYEAR.toString());
   }
 
-  async fillAddressFields({
+  /**
+   * Fill address, contact, and company details
+   */
+  async fillAddressInformation({
     FIRST_NAME,
     LAST_NAME,
     COMPANY,
@@ -63,44 +99,84 @@ export class SignUp {
     ZIPCODE,
     MOBILENUMBER,
   }) {
-    await this.locators.firstName.fill(FIRST_NAME);
-    await this.locators.lastName.fill(LAST_NAME);
-    await this.locators.companyName.fill(COMPANY);
-    await this.locators.userAdress.fill(STREETADDRESS);
-    await this.locators.userAdress2.fill(HOMEADRESS);
-    await this.locators.state.fill(STATE);
-    await this.locators.city.fill(CITY);
-    await this.locators.zipcode.fill(ZIPCODE.toString());
-    await this.locators.mobileNumber.fill(MOBILENUMBER.toString());
+    await this.locators.firstNameInput.fill(FIRST_NAME);
+    await this.locators.lastNameInput.fill(LAST_NAME);
+    await this.locators.companyInput.fill(COMPANY);
+    await this.locators.addressLine1Input.fill(STREETADDRESS);
+    await this.locators.addressLine2Input.fill(HOMEADRESS);
+    await this.locators.stateInput.fill(STATE);
+    await this.locators.cityInput.fill(CITY);
+    await this.locators.zipcodeInput.fill(ZIPCODE.toString());
+    await this.locators.mobileInput.fill(MOBILENUMBER.toString());
   }
 
+  /**
+   * Select country from dropdown
+   */
   async selectCountry(countryName) {
-    // countryOptions indicate the all country locators
-    // country select specify the select tag.
-    const options = await this.locators.countryOptions.all();
-    for (const option of options) {
-      const value = (await option.textContent())?.trim();
-      if (value && value.includes(countryName)) {
-        await this.locators.countrySelect.selectOption({ value });
-        return;
-      }
-    }
-    throw new Error(`Country "${countryName}" not found in dropdown`);
+    await this.locators.countryDropdown.selectOption({ label: countryName });
   }
 
-  async createAddressInfo(data) {
-    await this.fillAddressFields(data);
-  }
-
+  /**
+   * Create account and wait for navigation
+   */
   async createAccount() {
     await Promise.all([
-      this.page.waitForNavigation({ waitUntil: "domcontentloaded" }),
+      this.page.waitForNavigation({ waitUntil: LOAD_STATE }),
       this.locators.createAccountBtn.click(),
     ]);
   }
 
-  async verifyAccountCreationSuccessMessage() {
-    await this.locators.verifyAccountCreation.waitFor({ state: "visible" });
-    return this.locators.verifyAccountCreation.textContent();
+  /**
+   * Verify success message after account creation
+   */
+  async verifyAccountCreatedMessage(expectedText) {
+    await expect(this.locators.accountCreatedMsg).toBeVisible();
+    await expect(this.locators.accountCreatedMsg).toHaveText(expectedText);
+  }
+
+  /**
+   * Click continue button after account creation
+   */
+  async clickContinueButton() {
+    await Promise.all([
+      this.page.waitForNavigation({ waitUntil: LOAD_STATE }),
+      this.locators.continueBtn.click(),
+    ]);
+  }
+
+  /**
+   * Get logged-in user's name
+   */
+  async getLoggedInUserName() {
+    await this.locators.loggedInUser.waitFor({ state: "visible" });
+    const text = await this.locators.loggedInUser.textContent();
+    return text.trim();
+  }
+
+  /**
+   * Verify logged-in user's name matches expected
+   */
+  async verifyLoggedInUserName(expectedName) {
+    const actual = await this.getLoggedInUserName();
+    expect(actual).toContain(expectedName);
+  }
+
+  /**
+   * Delete account and wait for redirect
+   */
+  async deleteAccount() {
+    await Promise.all([
+      this.page.waitForNavigation({ waitUntil: LOAD_STATE }),
+      this.locators.deleteAccountBtn.click(),
+    ]);
+  }
+
+  /**
+   * Verify success message after account deletion
+   */
+  async verifyDeleteAccountSuccessMessage(expectedText) {
+    await expect(this.locators.accountDeletedMsg).toBeVisible();
+    await expect(this.locators.accountDeletedMsg).toHaveText(expectedText);
   }
 }

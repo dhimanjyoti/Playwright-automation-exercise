@@ -1,3 +1,4 @@
+// pages/BasePage.js
 export class BasePage {
   constructor(page) {
     this.page = page;
@@ -6,12 +7,26 @@ export class BasePage {
     };
   }
 
-  // Navigate to the application url
-  async navigateToAutomationExcercise() {
-    await this.page.goto("/");
+  /**
+   * Navigate to the application base URL
+   */
+  async navigateToAutomationExercise() {
+    const baseUrl = process.env.BASE_URL || "https://automationexercise.com";
+    await this.page.goto(baseUrl, { waitUntil: "domcontentloaded" });
   }
 
+  /**
+   * Verify that the app logo is visible (basic sanity check)
+   */
+  async verifyAppLogoVisible() {
+    await this.locators.appLogo.waitFor({ state: "visible" });
+    return await this.locators.appLogo.isVisible();
+  }
+
+  /**
+   * Retrieve the current page title
+   */
   async getPageTitle() {
-    return await this.page.title();
+    return this.page.title();
   }
 }
