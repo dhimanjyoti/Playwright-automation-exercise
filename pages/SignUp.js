@@ -1,13 +1,19 @@
 import { expect } from "@playwright/test";
+import { BasePage } from "./BasePage";
 
 const LOAD_STATE = "domcontentloaded"; // standardize page load waits
 
-export class SignUp {
+export class SignUp extends BasePage {
   constructor(page) {
+    super(page);
     this.page = page;
     this.locators = {
-      // Navigation
-      signUpLink: page.locator("//a[normalize-space()='Signup / Login']"),
+      // Keep the BasePage locators
+      ...this.locators,
+      // Sign Header Text
+      signUpHeaderText: page.locator(
+        "//h2[normalize-space()='New User Signup!']"
+      ),
 
       // Sign-up form
       userNameInput: page.locator("[data-qa='signup-name']"),
@@ -41,7 +47,6 @@ export class SignUp {
       // Verification elements
       accountCreatedMsg: page.locator("[data-qa='account-created'] b"),
       accountDeletedMsg: page.locator("[data-qa='account-deleted'] b"),
-      loggedInUser: page.locator("//a[contains(.,'Logged in as')]/b"),
     };
   }
 
@@ -49,10 +54,12 @@ export class SignUp {
    * Navigate to Sign Up page
    */
   async navigateToSignUpPage() {
-    await Promise.all([
-      this.page.waitForLoadState(LOAD_STATE),
-      this.locators.signUpLink.click(),
-    ]);
+    await this.openAuthPage();
+    await expect(
+      this.locators.signUpHeaderText,
+      "Home Page did not load"
+    ).toBeVisible();
+    await expect(this.page).toHaveURL(/login/i);
   }
 
   /**
@@ -125,6 +132,7 @@ export class SignUp {
       this.page.waitForNavigation({ waitUntil: LOAD_STATE }),
       this.locators.createAccountBtn.click(),
     ]);
+    await expect(this.page).toHaveURL(/account_created/i);
   }
 
   /**
@@ -143,22 +151,14 @@ export class SignUp {
       this.page.waitForNavigation({ waitUntil: LOAD_STATE }),
       this.locators.continueBtn.click(),
     ]);
-  }
-
-  /**
-   * Get logged-in user's name
-   */
-  async getLoggedInUserName() {
-    await this.locators.loggedInUser.waitFor({ state: "visible" });
-    const text = await this.locators.loggedInUser.textContent();
-    return text.trim();
+    await expect(this.page).toHaveURL("/");
   }
 
   /**
    * Verify logged-in user's name matches expected
    */
   async verifyLoggedInUserName(expectedName) {
-    const actual = await this.getLoggedInUserName();
+    const actual = await this.verifyUserName();
     expect(actual).toContain(expectedName);
   }
 
