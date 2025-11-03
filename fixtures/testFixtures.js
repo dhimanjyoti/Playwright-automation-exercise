@@ -4,6 +4,7 @@ import * as dotenv from "dotenv";
 import path from "path";
 import { BasePage } from "../pages/BasePage";
 import { SignUp } from "../pages/SignUp";
+import { Login } from "../pages/Login.js";
 import { signUpTestData, EXPECTED_MESSAGES } from "../utils/signUpTestData.js";
 
 // Load environment variables from project root
@@ -18,13 +19,17 @@ export const test = base.extend({
     await use(new SignUp(page));
   },
 
+  login: async ({ page }, use) => {
+    await use(new Login(page));
+  },
+
   data: async ({}, use) => {
     const { MALE_USER } = signUpTestData;
 
     const data = {
       username: MALE_USER.USERNAME,
       emailAddress: process.env.USEREMAIL ?? "dummy@example.com",
-      //   password: process.env.PASSWORD ?? "Default@123",
+      password: process.env.PASSWORD ?? "Default@123",
 
       accountInfo: {
         ...MALE_USER.ACCOUNT_INFO,
@@ -38,8 +43,6 @@ export const test = base.extend({
         accountDeleted: EXPECTED_MESSAGES.ACCOUNT_DELETED,
       },
     };
-
-    console.log("🔐 Loaded PASSWORD:", data.PASSWORD); // ✅ Debug once
 
     await use(data);
   },

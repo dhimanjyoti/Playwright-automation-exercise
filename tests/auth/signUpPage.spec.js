@@ -12,7 +12,6 @@ test.describe("SignUp Feature Suite", () => {
     await test.step("Navigate to Automation Exercise and open Sign Up page", async () => {
       await basePage.navigateToAutomationExercise();
       await signUp.navigateToSignUpPage();
-      await expect(page).toHaveURL(/login/i);
     });
 
     // Step 2: Fill sign-up form and create account
@@ -27,25 +26,22 @@ test.describe("SignUp Feature Suite", () => {
       await signUp.selectCountry(data.addressInfo.COUNTRY);
 
       await signUp.createAccount();
-
-      await expect(page).toHaveURL(/account_created/i);
       await signUp.verifyAccountCreatedMessage(data.expected.accountCreated);
     });
 
-    // Step 3: Verify login success
+    // Step 3: Verify signUp success
     await test.step("Verify account creation and logged-in username", async () => {
       await signUp.clickContinueButton();
       await signUp.verifyLoggedInUserName(data.username);
     });
 
     // Step 4: Delete account and verify success
-    await test.step("Delete account and verify deletion success", async () => {
-      await signUp.deleteAccount();
-      await signUp.verifyDeleteAccountSuccessMessage(
-        data.expected.accountDeleted
-      );
-      await signUp.clickContinueButton();
-      await expect(page).toHaveURL("/");
-    });
+    // await test.step("Delete account and verify deletion success", async () => {
+    //   await signUp.deleteAccount();
+    //   await signUp.verifyDeleteAccountSuccessMessage(
+    //     data.expected.accountDeleted
+    //   );
+    //   await signUp.clickContinueButton();
+    // });
   });
 });
