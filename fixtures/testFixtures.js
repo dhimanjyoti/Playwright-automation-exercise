@@ -6,6 +6,7 @@ import { BasePage } from "../pages/BasePage";
 import { SignUp } from "../pages/SignUp";
 import { Login } from "../pages/Login.js";
 import { signUpTestData, EXPECTED_MESSAGES } from "../utils/signUpTestData.js";
+import { invalidErrorText } from "../utils/invalidLoginTestData.js";
 
 // Load environment variables from project root
 dotenv.config({ path: path.resolve(process.cwd(), ".env"), override: true });
@@ -41,6 +42,9 @@ export const test = base.extend({
       expected: {
         accountCreated: EXPECTED_MESSAGES.ACCOUNT_CREATED,
         accountDeleted: EXPECTED_MESSAGES.ACCOUNT_DELETED,
+      },
+      errorText: {
+        invalidText: invalidErrorText.INVALID_TEXT,
       },
     };
 

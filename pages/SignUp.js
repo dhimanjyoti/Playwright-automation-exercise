@@ -47,6 +47,11 @@ export class SignUp extends BasePage {
       // Verification elements
       accountCreatedMsg: page.locator("[data-qa='account-created'] b"),
       accountDeletedMsg: page.locator("[data-qa='account-deleted'] b"),
+
+      // invalid SignUp
+      invalidSignUp: page.locator(
+        "//p[normalize-space()='Email Address already exist!']"
+      ),
     };
   }
 
@@ -178,5 +183,15 @@ export class SignUp extends BasePage {
   async verifyDeleteAccountSuccessMessage(expectedText) {
     await expect(this.locators.accountDeletedMsg).toBeVisible();
     await expect(this.locators.accountDeletedMsg).toHaveText(expectedText);
+  }
+
+  async signUpWithExistingUser({ username, emailAddress }) {
+    await this.navigateToSignUpPage();
+    await this.enterSignUpCredentials({ username, emailAddress });
+  }
+
+  async expectInvalidSignUpMessage() {
+    await expect(this.locators.invalidSignUp).toBeVisible();
+    return await this.locators.invalidSignUp.textContent();
   }
 }
