@@ -18,6 +18,10 @@ export class Login extends BasePage {
       loginEmail: page.locator("[data-qa='login-email']"),
       loginPassword: page.locator("[data-qa='login-password']"),
       loginBtn: page.locator("[data-qa='login-button']"),
+      invalidLogin: page.locator(
+        "//p[normalize-space()='Your email or password is incorrect!']"
+      ),
+      logoutBtn: page.locator("a[href='/logout']"),
     };
   }
 
@@ -53,5 +57,28 @@ export class Login extends BasePage {
   }
   async verifySuccessfulLogin() {
     return await this.verifyUserName();
+  }
+
+  async expectInvalidLoginMessage() {
+    await expect(this.locators.invalidLogin).toBeVisible();
+    return await this.locators.invalidLogin.textContent();
+  }
+
+  async loginWithValidUser({ emailAddress, password }) {
+    await this.verifyHomePage();
+    await this.navigateToLoginPage();
+    await this.enterLoginCredentails({ emailAddress, password });
+    await this.verifySuccessfulLogin();
+  }
+
+  async logout() {
+    await Promise.all([
+      this.page.waitForNavigation({ waitUntil: LOAD_STATE }),
+      this.locators.logoutBtn.click(),
+    ]);
+  }
+
+  async verifyLogoutSuccessful() {
+    await expect(this.page).toHaveURL("/login");
   }
 }
