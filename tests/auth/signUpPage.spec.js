@@ -1,4 +1,3 @@
-// tests/auth/SignUpPage.spec.js
 import { test, expect } from "../../fixtures/testFixtures";
 
 test.describe("SignUp Feature Suite", () => {
