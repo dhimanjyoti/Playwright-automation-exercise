@@ -5,8 +5,13 @@ import path from "path";
 import { BasePage } from "../pages/BasePage";
 import { SignUp } from "../pages/SignUp";
 import { Login } from "../pages/Login.js";
-import { signUpTestData, EXPECTED_MESSAGES } from "../utils/signUpTestData.js";
-import { invalidErrorText } from "../utils/invalidLoginTestData.js";
+import {
+  signUpTestData,
+  EXPECTED_MESSAGES,
+} from "../test-data/signUpTestData.js";
+import { invalidErrorText } from "../test-data/invalidLoginTestData.js";
+import { contactFormData } from "../test-data/contactUsFormData.js";
+import { ContactUs } from "../pages/contactUs.js";
 
 // Load environment variables from project root
 dotenv.config({ path: path.resolve(process.cwd(), ".env"), override: true });
@@ -22,6 +27,10 @@ export const test = base.extend({
 
   login: async ({ page }, use) => {
     await use(new Login(page));
+  },
+
+  contactUsPage: async ({ page }, use) => {
+    await use(new ContactUs(page));
   },
 
   data: async ({}, use) => {
@@ -45,6 +54,12 @@ export const test = base.extend({
       },
       errorText: {
         invalidText: invalidErrorText.INVALID_TEXT,
+      },
+
+      contactFormData: {
+        subject: contactFormData.subject,
+        message: contactFormData.letter,
+        filePath: contactFormData.validFile,
       },
     };
 

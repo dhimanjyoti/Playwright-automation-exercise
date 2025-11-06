@@ -1,6 +1,4 @@
 import { expect } from "@playwright/test";
-
-// pages/BasePage.js
 const LOAD_STATE = "domcontentloaded"; // standardize page load waits
 export class BasePage {
   constructor(page) {

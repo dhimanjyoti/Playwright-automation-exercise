@@ -1,11 +1,8 @@
-// 📁 utils/signUpTestData.js
-
 /**
  * Test Data: Centralized mock data for Sign-Up flow.
  * Organized per user persona (e.g., MALE_USER, FEMALE_USER).
  * Keeps the structure consistent for scalability.
  */
-
 export const signUpTestData = {
   MALE_USER: {
     USERNAME: "Dhiman",
