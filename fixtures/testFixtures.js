@@ -1,0 +1,79 @@
+// fixtures/testFixtures.js
+import { test as base, expect } from "@playwright/test";
+import * as dotenv from "dotenv";
+import path from "path";
+import { BasePage } from "../pages/BasePage";
+import { SignUp } from "../pages/SignUp";
+import { Login } from "../pages/Login.js";
+import {
+  signUpTestData,
+  EXPECTED_MESSAGES,
+} from "../test-data/signUpTestData.js";
+import { invalidErrorText } from "../test-data/invalidLoginTestData.js";
+import { contactFormData } from "../test-data/contactUsFormData.js";
+import { ContactUs } from "../pages/contactUs.js";
+import { TestCasesPage } from "../pages/TestCasesPage.js";
+
+// Load environment variables from project root
+dotenv.config({ path: path.resolve(process.cwd(), ".env"), override: true });
+
+export const test = base.extend({
+  basePage: async ({ page }, use) => {
+    await use(new BasePage(page));
+  },
+
+  signUp: async ({ page }, use) => {
+    await use(new SignUp(page));
+  },
+
+  login: async ({ page }, use) => {
+    await use(new Login(page));
+  },
+
+  contactUsPage: async ({ page }, use) => {
+    await use(new ContactUs(page));
+  },
+
+  testCasesPage: async ({ page }, use) => {
+    await use(new TestCasesPage(page));
+  },
+
+  data: async ({}, use) => {
+    const { MALE_USER } = signUpTestData;
+
+    const data = {
+      username: MALE_USER.USERNAME,
+      emailAddress: process.env.USEREMAIL ?? "dummy@example.com",
+      password: process.env.PASSWORD ?? "Default@123",
+
+      accountInfo: {
+        ...MALE_USER.ACCOUNT_INFO,
+        PASSWORD: process.env.PASSWORD ?? "Default@123",
+      },
+
+      addressInfo: MALE_USER.ADDRESS_INFO,
+
+      expected: {
+        accountCreated: EXPECTED_MESSAGES.ACCOUNT_CREATED,
+        accountDeleted: EXPECTED_MESSAGES.ACCOUNT_DELETED,
+      },
+      errorText: {
+        invalidText: invalidErrorText.INVALID_TEXT,
+      },
+
+      contactFormData: {
+        subject: contactFormData.subject,
+        message: contactFormData.letter,
+        filePath: contactFormData.validFile,
+      },
+    };
+
+    await use(data);
+  },
+
+  expect: async ({}, use) => {
+    await use(expect);
+  },
+});
+
+export { expect };
