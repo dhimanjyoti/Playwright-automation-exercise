@@ -9,9 +9,9 @@ import {
   signUpTestData,
   EXPECTED_MESSAGES,
 } from "../test-data/signUpTestData.js";
-import { invalidErrorText } from "../test-data/invalidLoginTestData.js";
+import { invalidErrorText } from "../test-data/invalidSignUpLoginTestData.js";
 import { contactFormData } from "../test-data/contactUsFormData.js";
-import { ContactUs } from "../pages/contactUs.js";
+import { ContactUs } from "../pages/ContactUs.js";
 import { TestCasesPage } from "../pages/TestCasesPage.js";
 
 // Load environment variables from project root
@@ -58,7 +58,8 @@ export const test = base.extend({
         accountDeleted: EXPECTED_MESSAGES.ACCOUNT_DELETED,
       },
       errorText: {
-        invalidText: invalidErrorText.INVALID_TEXT,
+        invalidSignUpText: invalidErrorText.INVALID_SIGNUP_TEXT,
+        invalidLoginText: invalidErrorText.INVALID_LOGIN_TEXT,
       },
 
       contactFormData: {

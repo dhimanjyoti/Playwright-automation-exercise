@@ -1,46 +1,55 @@
 import { expect } from "@playwright/test";
 import { preventFormSubmit, waitForFewSeconds } from "../utils/helper";
-const LOAD_STATE = "domcontentloaded"; // standardize page load waits
+
 export class ContactUs {
   constructor(page) {
     this.page = page;
-    this.locators = {
-      contactUsBtn: page.locator("//a[normalize-space()='Contact us']"),
-      contactUsPageTitle: page.locator(
-        "//h2[normalize-space()='Get In Touch']"
-      ),
-      enterName: page.locator("[data-qa='name']"),
-      enterEmail: page.locator("[data-qa='email']"),
-      subject: page.locator("[data-qa='subject']"),
-      messageBox: page.locator("[data-qa='message']"),
-      chooseFile: page.locator("//input[@name='upload_file']"),
-      submitBtn: page.locator("[data-qa='submit-button']"),
-      successSubmitText: page.locator(".status.alert.alert-success"),
-      backToHomeBtn: page.locator(".btn.btn-success"),
-    };
+
+    // Locators
+    this.contactUsBtn = page.locator("//a[normalize-space()='Contact us']");
+    this.contactUsPageTitle = page.locator(
+      "//h2[normalize-space()='Get In Touch']"
+    );
+    this.enterName = page.locator("[data-qa='name']");
+    this.enterEmail = page.locator("[data-qa='email']");
+    this.subject = page.locator("[data-qa='subject']");
+    this.messageBox = page.locator("[data-qa='message']");
+    this.chooseFile = page.locator("//input[@name='upload_file']");
+    this.submitBtn = page.locator("[data-qa='submit-button']");
+    this.successSubmitText = page.locator(".status.alert.alert-success");
+    this.backToHomeBtn = page.locator(".btn.btn-success");
   }
 
-  async navigateToContactPageVerifyTitle() {
-    await this.locators.contactUsBtn.click(),
-      await expect(
-        this.locators.contactUsPageTitle,
-        "Header Text is not visibile as contact Us page didn't load"
-      ).toBeVisible();
-    await expect(this.page).toHaveURL(/contact_us/i);
-  }
-
-  async fillFormDetails({ username, emailAddress, contactFormData }) {
-    await this.locators.enterName.fill(username);
-    await this.locators.enterEmail.fill(emailAddress);
-    await this.locators.subject.fill(contactFormData.subject);
-    await this.locators.messageBox.fill(contactFormData.message);
-  }
-  async uploadContactFile(filePath) {
-    // await this.locators.chooseFile.click();
-    await this.locators.chooseFile.setInputFiles(filePath);
-  }
   /**
-   * First click: Prevents navigation and handles dialog
+   * Navigate to Contact page
+   */
+  async navigateToContactPage() {
+    await this.contactUsBtn.click();
+    await expect(this.contactUsPageTitle).toBeVisible();
+    return this;
+  }
+
+  /**
+   * Fills basic form details
+   */
+  async fillFormDetails({ username, emailAddress, contactFormData }) {
+    await this.enterName.fill(username);
+    await this.enterEmail.fill(emailAddress);
+    await this.subject.fill(contactFormData.subject);
+    await this.messageBox.fill(contactFormData.message);
+    return this;
+  }
+
+  /**
+   * Upload file
+   */
+  async uploadContactFile(filePath) {
+    await this.chooseFile.setInputFiles(filePath);
+    return this;
+  }
+
+  /**
+   * Handles the JS dialog for "Press OK to proceed!"
    */
   async handleDialogAndPreventNavigation() {
     await preventFormSubmit(this.page);
@@ -51,34 +60,33 @@ export class ContactUs {
       await dialog.accept();
     });
 
-    await this.locators.submitBtn.click();
-    // wait for few seconds after clicking the button
+    await this.submitBtn.click();
+
+    // helper
     await waitForFewSeconds(
       this.page,
       3,
       "waiting for dialog confirmation effect"
     );
+    return this;
   }
 
-  /**
-   * Second click: Actually submits and shows success message
-   */
-  async verifyFormSubmitAndSuccessMessage() {
-    await this.locators.submitBtn.click();
+  async submitAndGetSuccessMessage() {
+    await this.submitBtn.click();
 
-    await this.locators.successSubmitText.waitFor({ state: "attached" });
-    const message = (
-      await this.locators.successSubmitText.textContent()
-    )?.trim();
-    expect(message, "Success message should not be empty").toBeTruthy();
+    // stability wait
+    await this.successSubmitText.waitFor({ state: "visible" });
+
+    const message = (await this.successSubmitText.textContent())?.trim();
     return message;
   }
 
+  /**
+   * Navigate back to Home
+   */
   async navigateBackToHome() {
-    await Promise.all([
-      this.page.waitForNavigation({ waitUntil: LOAD_STATE }),
-      this.locators.backToHomeBtn.click(),
-    ]);
-    await expect(this.page).toHaveURL("/");
+    await this.backToHomeBtn.click();
+    await this.page.waitForURL("/");
+    return this;
   }
 }

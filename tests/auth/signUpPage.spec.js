@@ -5,15 +5,15 @@ test.describe("SignUp Feature Suite", () => {
     basePage,
     signUp,
     data,
-    page,
   }) => {
     // Step 1: Navigate and open sign-up page
     await test.step("Navigate to Automation Exercise and open Sign Up page", async () => {
       await basePage.navigateToAutomationExercise();
       await signUp.navigateToSignUpPage();
+      await expect(signUp.signUpHeaderText).toBeVisible();
     });
 
-    // Step 2: Fill sign-up form and create account
+    // Step 2: Fill sign-up details and create account
     await test.step("Fill sign-up details and create account", async () => {
       await signUp.enterSignUpCredentials({
         username: data.username,
@@ -25,21 +25,27 @@ test.describe("SignUp Feature Suite", () => {
       await signUp.selectCountry(data.addressInfo.COUNTRY);
 
       await signUp.createAccount();
-      await signUp.verifyAccountCreatedMessage(data.expected.accountCreated);
+
+      // Validate returned state
+      const message = await signUp.getAccountCreatedMessageText();
+      expect(message?.trim()).toBe(data.expected.accountCreated);
     });
 
-    // Step 3: Verify signUp success
+    // Step 3: Verify user is logged in
     await test.step("Verify account creation and logged-in username", async () => {
       await signUp.clickContinueButton();
-      await signUp.verifyLoggedInUserName(data.username);
+
+      const loggedInUser = await signUp.getLoggedInUserName();
+      expect(loggedInUser).toContain(data.username);
     });
 
-    // Step 4: Delete account and verify success
+    // Step 4: Delete account (uncomment when needed)
     // await test.step("Delete account and verify deletion success", async () => {
     //   await signUp.deleteAccount();
-    //   await signUp.verifyDeleteAccountSuccessMessage(
-    //     data.expected.accountDeleted
-    //   );
+    //
+    //   const deletedMsg = await signUp.getAccountDeletedMessageText();
+    //   expect(deletedMsg?.trim()).toBe(data.expected.accountDeleted);
+    //
     //   await signUp.clickContinueButton();
     // });
   });
