@@ -14,6 +14,9 @@ import { contactFormData } from "../test-data/contactUsFormData.js";
 import { ContactUs } from "../pages/ContactUs.js";
 import { TestCasesPage } from "../pages/TestCasesPage.js";
 import { ProductPage } from "../pages/ProductPage.js";
+import searchProducts from "../test-data/searchProducts.json" assert { type: "json" };
+import { SearchProduct } from "../pages/SearchProduct.js";
+import { SearchFlow } from "../flows/searchFlow.js";
 
 // Load environment variables from project root
 dotenv.config({ path: path.resolve(process.cwd(), ".env"), override: true });
@@ -41,6 +44,14 @@ export const test = base.extend({
 
   productsPage: async ({ page }, use) => {
     await use(new ProductPage(page));
+  },
+
+  searchProductPage: async ({ page }, use) => {
+    await use(new SearchProduct(page));
+  },
+
+  searchFlow: async ({ searchProductPage }, use) => {
+    await use(new SearchFlow({ searchProductPage }));
   },
 
   data: async ({}, use) => {
@@ -72,6 +83,8 @@ export const test = base.extend({
         message: contactFormData.letter,
         filePath: contactFormData.validFile,
       },
+
+      searchProducts,
     };
 
     await use(data);
