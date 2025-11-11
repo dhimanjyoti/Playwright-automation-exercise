@@ -13,6 +13,7 @@ import { invalidErrorText } from "../test-data/invalidSignUpLoginTestData.js";
 import { contactFormData } from "../test-data/contactUsFormData.js";
 import { ContactUs } from "../pages/ContactUs.js";
 import { TestCasesPage } from "../pages/TestCasesPage.js";
+import { ProductPage } from "../pages/ProductPage.js";
 
 // Load environment variables from project root
 dotenv.config({ path: path.resolve(process.cwd(), ".env"), override: true });
@@ -36,6 +37,10 @@ export const test = base.extend({
 
   testCasesPage: async ({ page }, use) => {
     await use(new TestCasesPage(page));
+  },
+
+  productsPage: async ({ page }, use) => {
+    await use(new ProductPage(page));
   },
 
   data: async ({}, use) => {
