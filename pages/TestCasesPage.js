@@ -1,9 +1,6 @@
-import { BasePage } from "./BasePage";
-
-export class TestCasesPage extends BasePage {
+export class TestCasesPage {
   constructor(page) {
-    super(page);
-
+    this.page = page;
     // Locators
     this.testCasesLink = page.locator("//a[contains(text(),'Test Cases')]");
     this.headerText = page.locator("h2.title.text-center b");
