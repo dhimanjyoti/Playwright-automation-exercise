@@ -1,0 +1,7 @@
+{
+  "searchProductsKeyword": {
+    "Women": ["Dress", "Tops", "Saree"],
+    "Men": ["TShirt", "Jeans"],
+    "Kids": ["Dress", "Tops & Shirts"]
+  }
+}
