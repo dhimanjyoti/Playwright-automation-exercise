@@ -15,8 +15,10 @@ import { ContactUs } from "../pages/ContactUs.js";
 import { TestCasesPage } from "../pages/TestCasesPage.js";
 import { ProductPage } from "../pages/ProductPage.js";
 import searchProducts from "../test-data/searchProducts.json" assert { type: "json" };
+import successMessageData from "../test-data/successMessageData.json" assert { type: "json" };
 import { SearchProduct } from "../pages/SearchProduct.js";
 import { SearchFlow } from "../flows/searchFlow.js";
+import { HomePage } from "../pages/HomePage.js";
 
 // Load environment variables from project root
 dotenv.config({ path: path.resolve(process.cwd(), ".env"), override: true });
@@ -54,6 +56,10 @@ export const test = base.extend({
     await use(new SearchFlow({ searchProductPage }));
   },
 
+  homePage: async ({ page }, use) => {
+    await use(new HomePage(page));
+  },
+
   data: async ({}, use) => {
     const { MALE_USER } = signUpTestData;
 
@@ -85,6 +91,7 @@ export const test = base.extend({
       },
 
       searchProducts,
+      successMessageData,
     };
 
     await use(data);
