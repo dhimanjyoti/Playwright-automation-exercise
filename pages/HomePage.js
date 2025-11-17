@@ -9,7 +9,7 @@ export class HomePage {
     this.successAlertMessage = page.locator(".alert-success.alert");
   }
 
-  async navigateToSubscriptionAndEnterEmailAdress(emailAddress) {
+  async subscribe(emailAddress) {
     await this.subscriptionBox.waitFor({ state: "visible" });
     await this.subscriptionBox.scrollIntoViewIfNeeded();
     await this.subscriptionBox.fill(emailAddress);
@@ -17,7 +17,7 @@ export class HomePage {
     return this;
   }
 
-  async isSuccessfullySubscribe() {
+  async getSubscriptionSuccessMessage() {
     await this.successAlertMessage.waitFor({ state: "visible" });
     await expect(this.successAlertMessage).toBeVisible();
     return this.successAlertMessage.textContent();
