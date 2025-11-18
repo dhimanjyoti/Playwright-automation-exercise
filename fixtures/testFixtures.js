@@ -20,6 +20,7 @@ import { SearchProduct } from "../pages/SearchProduct.js";
 import { SearchFlow } from "../flows/searchFlow.js";
 import { HomePage } from "../pages/HomePage.js";
 import { CartPage } from "../pages/CartPage.js";
+import { ProductListingPage } from "../pages/ProductListingPage.js";
 
 // Load environment variables from project root
 dotenv.config({ path: path.resolve(process.cwd(), ".env"), override: true });
@@ -63,6 +64,10 @@ export const test = base.extend({
 
   cartPage: async ({ page }, use) => {
     await use(new CartPage(page));
+  },
+
+  productListingPage: async ({ page }, use) => {
+    await use(new ProductListingPage(page));
   },
 
   data: async ({}, use) => {

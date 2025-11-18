@@ -31,7 +31,7 @@ export class Login extends BasePage {
   }
 
   async fetchLoggedInUsername() {
-    return this.getLoggedInUsername(); // from BasePage
+    return this.getLoggedInUsername(); //BasePage
   }
 
   async getInvalidLoginMessage() {
