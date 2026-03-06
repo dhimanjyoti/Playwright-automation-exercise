@@ -8,12 +8,13 @@ dotenv.config({ path: "./.env", override: true });
  * @see https://playwright.dev/docs/test-configuration
  */
 export default defineConfig({
-  timeout: 120000,
+  timeout: 60000,
   testDir: "./tests",
-  fullyParallel: true,
+  fullyParallel: false,
+  workers: 1,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  // workers: process.env.CI ? 1 : undefined,
 
   reporter: "html",
   use: {

@@ -1,5 +1,5 @@
-import { test, expect } from "../../fixtures/testFixtures";
-import { loginDataFactory } from "../../utils/dataFactory";
+import { test, expect } from "../../../fixtures/testFixtures";
+import { loginDataFactory } from "../../../utils/dataFactory";
 
 test.describe("Negative Login Test", () => {
   test("TC_03: Verify user cannot login with invalid email or password", async ({

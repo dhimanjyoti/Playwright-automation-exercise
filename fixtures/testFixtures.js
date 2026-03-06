@@ -13,6 +13,7 @@ import { invalidErrorText } from "../test-data/invalidSignUpLoginTestData.js";
 import { contactFormData } from "../test-data/contactUsFormData.js";
 import { ContactUs } from "../pages/ContactUs.js";
 import { TestCasesPage } from "../pages/TestCasesPage.js";
+import { loginDataFactory } from "../utils/dataFactory.js";
 
 // Load environment variables from project root
 dotenv.config({ path: path.resolve(process.cwd(), ".env"), override: true });
@@ -70,6 +71,17 @@ export const test = base.extend({
     };
 
     await use(data);
+  },
+
+  // Generate Random user name and email address
+  randomUser: async ({}, use) => {
+    const user = loginDataFactory.generateRandomUser();
+
+    await use({
+      username: user.username,
+      emailAddress: user.emailAddress,
+      password: process.env.PASSWORD ?? "Default@123",
+    });
   },
 
   expect: async ({}, use) => {

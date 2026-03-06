@@ -17,4 +17,14 @@ export const loginDataFactory = {
       password: faker.internet.password(),
     };
   },
+
+  generateRandomUser() {
+    const random = Math.random().toString(36).substring(2, 8);
+    const timestamp = Date.now();
+
+    return {
+      username: `user_${random}`,
+      emailAddress: `test_${random}_${timestamp}@mail.com`,
+    };
+  },
 };
