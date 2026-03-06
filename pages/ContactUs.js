@@ -8,7 +8,7 @@ export class ContactUs {
     // Locators
     this.contactUsBtn = page.locator("//a[normalize-space()='Contact us']");
     this.contactUsPageTitle = page.locator(
-      "//h2[normalize-space()='Get In Touch']"
+      "//h2[normalize-space()='Get In Touch']",
     );
     this.enterName = page.locator("[data-qa='name']");
     this.enterEmail = page.locator("[data-qa='email']");
@@ -66,12 +66,13 @@ export class ContactUs {
     await waitForFewSeconds(
       this.page,
       3,
-      "waiting for dialog confirmation effect"
+      "waiting for dialog confirmation effect",
     );
     return this;
   }
 
   async submitAndGetSuccessMessage() {
+    await this.submitBtn.waitFor({ state: "visible" });
     await this.submitBtn.click();
 
     // stability wait
