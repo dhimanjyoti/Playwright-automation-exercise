@@ -1,4 +1,4 @@
-import { test, expect } from "../../fixtures/testFixtures";
+import { test, expect } from "../../../fixtures/testFixtures";
 
 test.describe("Login Feature Suite", () => {
   test("TC_02: Verify that user is able to login with correct email & password", async ({

@@ -7,7 +7,7 @@ export class SignUp extends BasePage {
     this.page = page;
     // Headers
     this.signUpHeaderText = page.locator(
-      "//h2[normalize-space()='New User Signup!']"
+      "//h2[normalize-space()='New User Signup!']",
     );
 
     // Sign Up Form
@@ -43,7 +43,7 @@ export class SignUp extends BasePage {
     this.accountCreatedMsg = page.locator("[data-qa='account-created'] b");
     this.accountDeletedMsg = page.locator("[data-qa='account-deleted'] b");
     this.invalidSignUp = page.locator(
-      "//p[normalize-space()='Email Address already exist!']"
+      "//p[normalize-space()='Email Address already exist!']",
     );
   }
 
@@ -140,7 +140,8 @@ export class SignUp extends BasePage {
    */
   async clickContinueButton() {
     await this.continueBtn.click();
-    await this.page.waitForURL("/");
+
+    await expect(this.page.locator("text=Logged in as")).toBeVisible();
     return this;
   }
 

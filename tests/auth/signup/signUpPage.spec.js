@@ -1,10 +1,11 @@
-import { test, expect } from "../../fixtures/testFixtures";
-
+import { test, expect } from "../../../fixtures/testFixtures";
+import { loginDataFactory } from "../../../utils/dataFactory";
 test.describe("SignUp Feature Suite", () => {
   test("TC_001: Verify user can register, login, and delete account", async ({
     basePage,
     signUp,
     data,
+    randomUser,
   }) => {
     // Step 1: Navigate and open sign-up page
     await test.step("Navigate to Automation Exercise and open Sign Up page", async () => {
@@ -15,10 +16,7 @@ test.describe("SignUp Feature Suite", () => {
 
     // Step 2: Fill sign-up details and create account
     await test.step("Fill sign-up details and create account", async () => {
-      await signUp.enterSignUpCredentials({
-        username: data.username,
-        emailAddress: data.emailAddress,
-      });
+      await signUp.enterSignUpCredentials(randomUser);
 
       await signUp.fillAccountInformation(data.accountInfo);
       await signUp.fillAddressInformation(data.addressInfo);
@@ -36,7 +34,7 @@ test.describe("SignUp Feature Suite", () => {
       await signUp.clickContinueButton();
 
       const loggedInUser = await signUp.getLoggedInUserName();
-      expect(loggedInUser).toContain(data.username);
+      expect(loggedInUser).toContain(randomUser.username);
     });
 
     // Step 4: Delete account (uncomment when needed)

@@ -1,4 +1,4 @@
-import { test, expect } from "../../fixtures/testFixtures";
+import { test, expect } from "../../../fixtures/testFixtures";
 
 test.describe("Negative SignUp Test", () => {
   test("TC_05: Verify user is not able to register with an existing email ID", async ({
