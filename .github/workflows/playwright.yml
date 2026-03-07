@@ -1,31 +1,59 @@
+# ---------------------------------------------------------
+# Playwright CI Pipeline
+# Runs Playwright automation tests on every push to main
+# ---------------------------------------------------------
+
 name: Playwright Tests
 
+# ---------------------------------------------------------
+# Trigger the workflow when code is pushed to the main branch
+# ---------------------------------------------------------
 on:
   push:
     branches: [main]
 
 jobs:
   test:
+    # Maximum execution time before GitHub cancels the job
     timeout-minutes: 120
+
+    # GitHub-hosted runner environment
     runs-on: ubuntu-latest
 
+    # ---------------------------------------------------------
+    # Environment variables injected from GitHub Secrets
+    # Used for login credentials and base URL
+    # ---------------------------------------------------------
     env:
       BASE_URL: ${{ secrets.BASE_URL }}
       USEREMAIL: ${{ secrets.USEREMAIL }}
       PASSWORD: ${{ secrets.PASSWORD }}
 
     steps:
+      # ---------------------------------------------------------
+      # Step 1: Checkout repository code into the runner
+      # ---------------------------------------------------------
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # ---------------------------------------------------------
+      # Step 2: Install Node.js runtime
+      # cache: npm enables dependency caching for faster installs
+      # ---------------------------------------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
           cache: "npm"
 
-      # Cache Playwright browsers
+      # ---------------------------------------------------------
+      # Step 3: Cache Playwright browser binaries
+      # Prevents downloading ~600MB browsers on every CI run
+      # Browsers are stored in ~/.cache/ms-playwright
+      # Cache key changes when package-lock.json changes
+      # ---------------------------------------------------------
       - name: Cache Playwright Browsers
+        id: playwright-cache
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
@@ -33,15 +61,32 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-playwright-
 
+      # ---------------------------------------------------------
+      # Step 4: Install project dependencies
+      # npm ci ensures clean and reproducible installs
+      # ---------------------------------------------------------
       - name: Install Dependencies
         run: npm ci
 
+      # ---------------------------------------------------------
+      # Step 5: Install Playwright browsers
+      # This step runs only if the browser cache is missing
+      # ---------------------------------------------------------
       - name: Install Playwright Browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps
 
+      # ---------------------------------------------------------
+      # Step 6: Execute Playwright test suite
+      # ---------------------------------------------------------
       - name: Run Playwright Tests
         run: npx playwright test
 
+      # ---------------------------------------------------------
+      # Step 7: Upload Playwright HTML report as an artifact
+      # Allows downloading test reports from GitHub Actions
+      # retention-days defines how long the report is stored
+      # ---------------------------------------------------------
       - name: Upload Test Report
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
