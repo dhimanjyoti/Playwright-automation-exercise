@@ -86,54 +86,58 @@ export default defineConfig({
     // Additional browsers can be enabled if needed
 
     // Firefox testing
-    // {
-    //   name: "firefox",
-    //   use: { ...devices["Desktop Firefox"], headless: false },
-    // },
+    {
+      name: "firefox",
 
-    // Safari/WebKit testing
-    // {
-    //   name: "webkit",
-    //   use: { ...devices["Desktop Safari"], headless: false },
-    // },
-
-    /* Mobile testing examples */
-
-    // Chrome on mobile device
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-
-    // Safari on iPhone
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Testing branded browsers */
-
-    // Microsoft Edge
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-
-    // Google Chrome stable channel
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
+      use: {
+        ...devices["Desktop Firefox"],
+        headless: process.env.CI ? true : false,
+      },
+    },
   ],
-
-  /* Optional: start a local dev server before running tests */
-
-  // This is useful when testing a local application
-  // Playwright will start the server automatically before tests begin
-
-  // webServer: {
-  //   command: 'npm run start',  // command to start the app
-  //   url: 'http://localhost:3000', // URL where the app will be available
-  //   reuseExistingServer: !process.env.CI, // reuse server locally if already running
-  // },
 });
+
+// Safari/WebKit testing
+// {
+//   name: "webkit",
+//   use: { ...devices["Desktop Safari"], headless: false },
+// },
+
+/* Mobile testing examples */
+
+// Chrome on mobile device
+// {
+//   name: 'Mobile Chrome',
+//   use: { ...devices['Pixel 5'] },
+// },
+
+// Safari on iPhone
+// {
+//   name: 'Mobile Safari',
+//   use: { ...devices['iPhone 12'] },
+// },
+
+/* Testing branded browsers */
+
+// Microsoft Edge
+// {
+//   name: 'Microsoft Edge',
+//   use: { ...devices['Desktop Edge'], channel: 'msedge' },
+// },
+
+// Google Chrome stable channel
+// {
+//   name: 'Google Chrome',
+//   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
+// },
+
+/* Optional: start a local dev server before running tests */
+
+// This is useful when testing a local application
+// Playwright will start the server automatically before tests begin
+
+// webServer: {
+//   command: 'npm run start',  // command to start the app
+//   url: 'http://localhost:3000', // URL where the app will be available
+//   reuseExistingServer: !process.env.CI, // reuse server locally if already running
+// },

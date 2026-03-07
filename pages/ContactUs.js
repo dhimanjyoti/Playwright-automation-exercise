@@ -15,7 +15,7 @@ export class ContactUs {
     this.subject = page.locator("[data-qa='subject']");
     this.messageBox = page.locator("[data-qa='message']");
     this.chooseFile = page.locator("//input[@name='upload_file']");
-    this.submitBtn = page.locator("[data-qa='submit-button']");
+    this.submitBtn = page.locator("//input[@name='submit']");
     this.successSubmitText = page.locator(".status.alert.alert-success");
     this.backToHomeBtn = page.locator(".btn.btn-success");
   }
@@ -52,6 +52,7 @@ export class ContactUs {
    * Handles the JS dialog for "Press OK to proceed!"
    */
   async handleDialogAndPreventNavigation() {
+    // Prevent the page from reload after clicking OK button.
     await preventFormSubmit(this.page);
 
     this.page.once("dialog", async (dialog) => {
@@ -71,9 +72,10 @@ export class ContactUs {
     return this;
   }
 
+  // Why this combine method exist? - Because in chromium submitBtn does not get clicked on 1st try.
   async submitAndGetSuccessMessage() {
-    await this.submitBtn.waitFor({ state: "visible" });
-    await this.submitBtn.click();
+    // await this.submitBtn.waitFor({ state: "visible" });
+    // await this.submitBtn.click();
 
     // stability wait
     await this.successSubmitText.waitFor({ state: "visible" });
