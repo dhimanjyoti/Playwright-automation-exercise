@@ -1,0 +1,8 @@
+{
+  "MOCK_VISA_CARD": {
+    "CARD_NUMBER": "4111111111111111",
+    "CVC": "311",
+    "EXPIRY_MONTH": "12",
+    "EXPIRY_YEAR": "2027"
+  }
+}

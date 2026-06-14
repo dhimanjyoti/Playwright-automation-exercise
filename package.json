@@ -1,19 +1,46 @@
 {
-  "name": "automation-excercise",
+  "name": "playwright_autmation_js",
   "version": "1.0.0",
-  "description": "",
+  "description": "Enterprise Decoupled UI & API Automation Framework using Playwright",
   "main": "index.js",
-  "scripts": {},
-  "keywords": [],
-  "author": "",
+  "scripts": {
+    "test:ui": "npx playwright test --project=chromium",
+    "test:api": "npx playwright test --project=api",
+    "test:all": "npx playwright test",
+    "test:debug": "npx playwright test --debug",
+    "test:ui-mode": "npx playwright test --ui",
+    "test:prod-all": "cross-env TEST_ENV=production npx playwright test",
+    "test:prod-ui": "cross-env TEST_ENV=production npx playwright test --project=chromium --project=firefox",
+    "test:prod-api": "cross-env TEST_ENV=production npx playwright test --project=api",
+    "report:clean": "npx rimraf allure-results allure-report blob-report playwright-report",
+    "report:generate": "npx allure generate allure-results --clean -o allure-report",
+    "report:open": "npx allure open allure-report",
+    "test:visual": "npx playwright test --project=chromium tests/visual/",
+    "test:visual-update": "npx playwright test --project=chromium tests/visual/ --update-snapshots",
+     "manifest:generate": "node scripts/generate-manifest.js",
+     "test:noauth": "npx playwright test --project=chromium-noauth"
+  },
+  "keywords": [
+    "playwright",
+    "automation",
+    "testing",
+    "allure-report",
+    "api-testing",
+    "e2e"
+  ],
+  "author": "Dhimanjyoti Das",
   "license": "ISC",
-  "type": "module",
+  "type": "commonjs",
   "devDependencies": {
-    "@faker-js/faker": "^10.1.0",
-    "@playwright/test": "^1.58.2",
-    "@types/node": "^24.9.2"
+    "@faker-js/faker": "^10.4.0",
+    "@playwright/test": "^1.60.0",
+    "@types/node": "^25.9.1",
+    "allure-commandline": "^2.41.0",
+    "allure-playwright": "^3.9.0",
+    "cross-env": "^10.1.0"
   },
   "dependencies": {
-    "dotenv": "^17.3.1"
+    "dotenv": "^17.4.2",
+    "xlsx": "^0.18.5"
   }
 }

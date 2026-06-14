@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx playwright test *)",
+      "Bash(npx playwright show-report)"
+    ],
+    "deny": ["Bash(rm -rf *)", "Bash(git push --force)"]
+  }
+}

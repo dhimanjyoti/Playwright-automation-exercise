@@ -1,143 +1,117 @@
 // @ts-check
-// Enables TypeScript checking in JS files for better editor support and catching mistakes.
+const { defineConfig, devices } = require("@playwright/test");
+const dotenv = require("dotenv");
+const { EnvResolver } = require("./src/config/EnvResolver.js");
 
-import { defineConfig, devices } from "@playwright/test";
-// Import Playwright configuration helper and predefined device settings.
-
-import dotenv from "dotenv";
-// Import dotenv to load environment variables from a .env file (for local development).
-
-// Load environment variables ONLY when running locally
-// In CI (GitHub Actions), environment variables come from GitHub Secrets.
+// Load local SECRETS (passwords, emails) if we are NOT running in a CI environment.
 if (!process.env.CI) {
   dotenv.config({ path: "./.env" });
 }
 
-// Safety check to ensure BASE_URL is defined.
-// This prevents tests from running against an undefined URL.
-if (!process.env.BASE_URL) {
-  throw new Error("BASE_URL is not defined. Check env variables.");
+// Load ROUTING DATA (URLs, timeouts) dynamically based on TEST_ENV
+const envConfig = EnvResolver.getConfig();
+
+if (!envConfig.BASE_URL) {
+  throw new Error(
+    "CRITICAL: BASE_URL is not defined. Please check your environment config JSON.",
+  );
 }
 
-// Temporary debug log (useful when verifying CI secrets are working)
-// Remove this after confirming the pipeline works correctly.
-console.log("Running tests against:", process.env.BASE_URL);
-
-export default defineConfig({
-  // Maximum time allowed for each test before Playwright marks it as failed.
-  timeout: 60000, // 60 seconds
-
-  // Folder where all test files are located
+module.exports = defineConfig({
+  timeout: envConfig.TIMEOUT || 60 * 1000,
   testDir: "./tests",
 
-  // Number of workers (parallel test runners)
-  // In CI we run 2 workers to speed up tests
-  // Locally Playwright decides automatically
-  workers: process.env.CI ? 2 : undefined,
+  workers: process.env.CI ? 2 : 2,
+  retries:  1,
+  reporter: process.env.CI
+    ? [
+        ["html"],
+        ["github"],
+        [
+          "allure-playwright",
+          { detail: true, outputFolder: "allure-results", suiteTitle: false },
+        ],
+      ]
+    : [
+        ["list"],
+        ["html"],
+        [
+          "allure-playwright",
+          { detail: true, outputFolder: "allure-results", suiteTitle: false },
+        ],
+      ],
 
-  // Number of retries if a test fails
-  // Useful in CI where environments may be slower or unstable
-  retries: process.env.CI ? 2 : 0,
-
-  // Reporter used to generate test reports
-  // "html" creates a visual test report you can open in a browser
-  reporter: "html",
+  expect: {
+    timeout: 10 * 1000,
+  },
 
   use: {
-    // Base URL used in tests
-    // Example: page.goto('/login') → resolves to BASE_URL/login
-    baseURL: process.env.BASE_URL,
-
-    // Collect Playwright trace when a test fails on retry
-    // Trace helps debug failures by recording screenshots, DOM, and network logs
+    baseURL: envConfig.BASE_URL,
     trace: "on-first-retry",
-
-    // Capture screenshot only if a test fails
     screenshot: "only-on-failure",
-
-    // Record video of the test execution
-    // Very helpful for debugging CI failures
-    video: "on",
+    video: "retain-on-failure",
+    // retries: 2,
   },
 
-  // Configuration for Playwright expect assertions
-  expect: {
-    // Maximum time Playwright will wait for an assertion
-    // Example: expect(locator).toBeVisible()
-    timeout: 10000, // 10 seconds
-  },
-
-  // Projects allow running tests across multiple browsers/devices
   projects: [
+    // Dedicated API Project
     {
-      name: "chromium", // Project name shown in reports
+      name: "api",
+      testMatch: /.*\.api\.spec\.js/,
+    },
 
+    // Setup Project: Runs your auth.setup.js file first
+    {
+      name: "setup",
+      testMatch: /.*\.setup\.js/,
+    },
+
+    {
+      name: "chromium",
+      // UI Browsers (Wait for setup, inject state, strictly ignore API, visual, and noauth files)
+      testIgnore: [
+        "**/api-hybrid/**",
+        "**/visual/**",
+        "**/*.noauth.spec.js", // <-- AUTOMATIC ESCAPE HATCH
+      ],
       use: {
-        // Use Playwright's predefined Chrome desktop settings
         ...devices["Desktop Chrome"],
-
-        // Headless mode:
-        // - In CI → run headless (no visible browser)
-        // - Locally → open browser window for easier debugging
-        headless: process.env.CI ? true : false,
+        storageState: ".auth/user.json",
       },
+      dependencies: ["setup"],
     },
 
-    // Additional browsers can be enabled if needed
+    // {
+    //   name: "firefox",
+    //   testIgnore: [
+    //     "**/api-hybrid/**",
+    //     "**/visual/**",
+    //     "**/*.noauth.spec.js", // <-- AUTOMATIC ESCAPE HATCH
+    //   ],
+    //   use: {
+    //     ...devices["Desktop Firefox"],
+    //     storageState: ".auth/user.json",
+    //   },
+    //   dependencies: ["setup"],
+    // },
 
-    // Firefox testing
+    // Fresh-context project: no auth setup, no pre-loaded storageState.
+    // Automatically routes any file ending in .noauth.spec.js here.
     {
-      name: "firefox",
-
+      name: "chromium-noauth",
+      testMatch: ["**/*.noauth.spec.js"], 
       use: {
-        ...devices["Desktop Firefox"],
-        headless: process.env.CI ? true : false,
+        ...devices["Desktop Chrome"],
       },
     },
+
+    // FOR FIREFOX NO-AUTH
+    // {
+    //   name: "firefox-noauth",
+    //   testMatch: ["**/*.noauth.spec.js"], // <-- AUTOMATIC ROUTING
+    //   use: {
+    //     ...devices["Desktop Firefox"],
+    //   },
+    // },
   ],
 });
-
-// Safari/WebKit testing
-// {
-//   name: "webkit",
-//   use: { ...devices["Desktop Safari"], headless: false },
-// },
-
-/* Mobile testing examples */
-
-// Chrome on mobile device
-// {
-//   name: 'Mobile Chrome',
-//   use: { ...devices['Pixel 5'] },
-// },
-
-// Safari on iPhone
-// {
-//   name: 'Mobile Safari',
-//   use: { ...devices['iPhone 12'] },
-// },
-
-/* Testing branded browsers */
-
-// Microsoft Edge
-// {
-//   name: 'Microsoft Edge',
-//   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-// },
-
-// Google Chrome stable channel
-// {
-//   name: 'Google Chrome',
-//   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-// },
-
-/* Optional: start a local dev server before running tests */
-
-// This is useful when testing a local application
-// Playwright will start the server automatically before tests begin
-
-// webServer: {
-//   command: 'npm run start',  // command to start the app
-//   url: 'http://localhost:3000', // URL where the app will be available
-//   reuseExistingServer: !process.env.CI, // reuse server locally if already running
-// },
