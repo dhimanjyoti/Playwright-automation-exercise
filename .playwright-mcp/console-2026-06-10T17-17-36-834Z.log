@@ -1,0 +1,13 @@
+[    1730ms] [ERROR] Mixed Content: The page at 'https://www.automationexercise.com/contact_us' was loaded over HTTPS, but requested an insecure stylesheet 'http://fonts.googleapis.com/css?family=Roboto:400,300,400italic,500,700,100'. This request has been blocked; the content must be served over HTTPS. @ https://www.automationexercise.com/contact_us:0
+[    1730ms] [ERROR] Mixed Content: The page at 'https://www.automationexercise.com/contact_us' was loaded over HTTPS, but requested an insecure stylesheet 'http://fonts.googleapis.com/css?family=Open+Sans:400,800,300,600,700'. This request has been blocked; the content must be served over HTTPS. @ https://www.automationexercise.com/contact_us:0
+[    1731ms] [ERROR] Mixed Content: The page at 'https://www.automationexercise.com/contact_us' was loaded over HTTPS, but requested an insecure stylesheet 'http://fonts.googleapis.com/css?family=Abel'. This request has been blocked; the content must be served over HTTPS. @ https://www.automationexercise.com/contact_us:0
+[    3119ms] [WARNING] Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading @ https://maps.google.com/maps/api/js?sensor=true:322
+[    4190ms] Error: vignette: no interstitial API
+    at https://s0.2mdn.net/879366/express_html_inpage_rendering_lib_200_287.js:159:498
+[    4191ms] Error: vignette: no interstitial API
+    at https://s0.2mdn.net/879366/express_html_inpage_rendering_lib_200_287.js:159:498
+[    4522ms] [ERROR] Attestation check for Attribution Reporting on https://ad.doubleclick.net failed. @ https://www.automationexercise.com/contact_us:0
+[    4584ms] [ERROR] Attestation check for Shared Storage on https://www.googleadservices.com failed. @ https://www.googleadservices.com/pagead/managed/js/activeview/current/reach_worklet.html:0
+[    4801ms] [ERROR] Attestation check for Attribution Reporting on https://ad.doubleclick.net failed. @ https://www.automationexercise.com/contact_us:0
+[    8603ms] [WARNING] Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys @ https://maps.google.com/maps-api-v3/api/js/65/3b/util.js:37
+[    8603ms] [WARNING] Google Maps JavaScript API warning: SensorNotRequired https://developers.google.com/maps/documentation/javascript/error-messages#sensor-not-required @ https://maps.google.com/maps-api-v3/api/js/65/3b/util.js:37

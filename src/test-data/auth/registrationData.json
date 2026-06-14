@@ -1,0 +1,44 @@
+{
+  "MALE_USER": {
+    "USERNAME": "Dhiman",
+    "ACCOUNT_INFO": {
+      "TITLE": "Mr",
+      "BIRTHDATE": 6,
+      "BIRTHMONTH": "November",
+      "BIRTHYEAR": 1997
+    },
+    "ADDRESS_INFO": {
+      "FIRST_NAME": "Dhimanjyoti",
+      "LAST_NAME": "Das",
+      "COMPANY": "Microsoft-service",
+      "STREETADDRESS": "Pitfall Street 23rd Ave",
+      "HOMEADRESS": "House No: 10",
+      "STATE": "New York",
+      "CITY": "Hamper City",
+      "ZIPCODE": 536412,
+      "MOBILENUMBER": "73478843874",
+      "COUNTRY": "United States"
+    }
+  },
+  "FEMALE_USER": {
+    "USERNAME": "Ananya",
+    "ACCOUNT_INFO": {
+      "TITLE": "Mrs",
+      "BIRTHDATE": 14,
+      "BIRTHMONTH": "April",
+      "BIRTHYEAR": 1999
+    },
+    "ADDRESS_INFO": {
+      "FIRST_NAME": "Ananya",
+      "LAST_NAME": "Sharma",
+      "COMPANY": "Google-service",
+      "STREETADDRESS": "Liberty Boulevard 45th St",
+      "HOMEADRESS": "Apartment 4B",
+      "STATE": "California",
+      "CITY": "San Jose",
+      "ZIPCODE": 95112,
+      "MOBILENUMBER": "9876543210",
+      "COUNTRY": "United States"
+    }
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "BASE_URL": "https://automationexercise.com",
+  "API_URL": "https://api.automationexercise.com",
+  "TIMEOUT": 30000
+}
