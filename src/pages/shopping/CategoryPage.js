@@ -52,14 +52,11 @@ export class CategoryPage extends BasePage {
     // Ensure the Bootstrap accordion JS is fully initialized before interacting.
     await this.page.waitForLoadState("domcontentloaded");
 
-    // dispatchEvent fires the click directly on the DOM node, bypassing
-    // Playwright's pointer-event pipeline which can be blocked by zero-size
-    // ad iframes that sit in the event path on this site.
     const toggle = this.page.locator(
       `.left-sidebar a[href="#${parentCategoryName}"]`,
     );
     await toggle.scrollIntoViewIfNeeded();
-    await toggle.dispatchEvent("click");
+    await toggle.click();
 
     const subLink = this.page
       .locator(`#${parentCategoryName}`)

@@ -4,6 +4,7 @@ import { POManager } from "../pages/POManager.js";
 import { ApiManager } from "../api/ApiManager.js"; // <-- 1. Import ApiManager
 import { userDataFactory } from "../utils/user-data-factory.js";
 import { blockAds } from "../utils/networkInterceptor.js";
+import { HTTP_STATUS } from "../constants/apiStatus.js";
 
 import contactData from "../test-data/marketing/contactFormData.json";
 import registrationData from "../test-data/auth/registrationData.json";
@@ -23,6 +24,7 @@ import paymentData from "../test-data/shopping/paymentData.json";
  * @property {import('../api/ApiManager.js').ApiManager} api // <-- 2. Add API to Types
  * @property {DataFixture} data
  * @property {typeof userDataFactory} factory
+ * @property {{ track(email: string, password: string): void, markDeleted(email: string): void }} accountCleanup
  */
 
 /** * Extend the base Playwright test with our custom fixtures
@@ -61,6 +63,35 @@ export const test = base.extend({
    */
   factory: async ({}, use) => {
     await use(userDataFactory);
+  },
+
+  accountCleanup: async ({ api }, use) => {
+    /** @type {Map<string, string>} */
+    const accounts = new Map();
+
+    await use({
+      track(email, password) {
+        accounts.set(email, password);
+      },
+      markDeleted(email) {
+        accounts.delete(email);
+      },
+    });
+
+    for (const [email, password] of accounts) {
+      const response = await api.account.deleteAccount(email, password);
+      const body = /** @type {{ responseCode?: number }} */ (
+        await response.json()
+      );
+      const responseCode = /** @type {200 | 404} */ (body.responseCode ?? 0);
+      const cleanupSucceeded =
+        response.status() === HTTP_STATUS.OK &&
+        [HTTP_STATUS.OK, HTTP_STATUS.NOT_FOUND].includes(responseCode);
+
+      if (!cleanupSucceeded) {
+        throw new Error(`Failed to clean up API test account: ${email}`);
+      }
+    }
   },
 });
 

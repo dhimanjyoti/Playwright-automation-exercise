@@ -4,7 +4,7 @@ const path = require("path");
 
 class EnvResolver {
   /**
-   * Reads the TEST_ENV variable and loads the corresponding JSON config.
+   * Loads the selected JSON config and applies optional CI environment overrides.
    * @returns {{ BASE_URL: string, API_URL: string, TIMEOUT: number }}
    */
   static getConfig() {
@@ -21,7 +21,45 @@ class EnvResolver {
     }
 
     const fileContents = fs.readFileSync(configPath, "utf-8");
-    return JSON.parse(fileContents);
+    const fileConfig = JSON.parse(fileContents);
+    const timeout = Number(process.env.TEST_TIMEOUT ?? fileConfig.TIMEOUT);
+
+    const config = {
+      BASE_URL: process.env.BASE_URL ?? fileConfig.BASE_URL,
+      API_URL:
+        process.env.API_URL ?? fileConfig.API_URL ?? process.env.BASE_URL ?? fileConfig.BASE_URL,
+      TIMEOUT: timeout,
+    };
+
+    EnvResolver.#validateConfig(config, environment);
+    return config;
+  }
+
+  /**
+   * Validates required URLs and timeout values before Playwright starts.
+   * @param {{ BASE_URL: string, API_URL: string, TIMEOUT: number }} config
+   * @param {string} environment
+   * @returns {void}
+   */
+  static #validateConfig(config, environment) {
+    for (const [name, value] of Object.entries({
+      BASE_URL: config.BASE_URL,
+      API_URL: config.API_URL,
+    })) {
+      if (!value) {
+        throw new Error(`${name} is missing for environment: ${environment}`);
+      }
+
+      try {
+        new URL(value);
+      } catch {
+        throw new Error(`${name} is not a valid URL for environment: ${environment}`);
+      }
+    }
+
+    if (!Number.isFinite(config.TIMEOUT) || config.TIMEOUT <= 0) {
+      throw new Error(`TIMEOUT must be a positive number for environment: ${environment}`);
+    }
   }
 }
 

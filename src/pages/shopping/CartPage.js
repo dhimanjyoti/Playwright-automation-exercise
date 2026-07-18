@@ -202,10 +202,6 @@ async removeCartItemByIndex(index) {
 
   await this.page.pause();
 
-  // Optional debugging
-  const box = await deleteBtn.boundingBox();
-  console.log("Delete button bounding box:", box);
-
   await deleteBtn.click();
 
   await this.page.locator(`#${rowId}`).waitFor({

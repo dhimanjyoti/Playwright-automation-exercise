@@ -1,9 +1,0 @@
-[    1012ms] [ERROR] Mixed Content: The page at 'https://www.automationexercise.com/product_details/1' was loaded over HTTPS, but requested an insecure stylesheet 'http://fonts.googleapis.com/css?family=Roboto:400,300,400italic,500,700,100'. This request has been blocked; the content must be served over HTTPS. @ https://www.automationexercise.com/product_details/1:18
-[    1013ms] [ERROR] Mixed Content: The page at 'https://www.automationexercise.com/product_details/1' was loaded over HTTPS, but requested an insecure stylesheet 'http://fonts.googleapis.com/css?family=Open+Sans:400,800,300,600,700'. This request has been blocked; the content must be served over HTTPS. @ https://www.automationexercise.com/product_details/1:18
-[    1013ms] [ERROR] Mixed Content: The page at 'https://www.automationexercise.com/product_details/1' was loaded over HTTPS, but requested an insecure stylesheet 'http://fonts.googleapis.com/css?family=Abel'. This request has been blocked; the content must be served over HTTPS. @ https://www.automationexercise.com/product_details/1:18
-[    3042ms] [ERROR] Attestation check for Attribution Reporting on https://ad.doubleclick.net failed. @ https://www.automationexercise.com/product_details/1:0
-[    3314ms] [ERROR] Attestation check for Shared Storage on https://www.googleadservices.com failed. @ https://www.googleadservices.com/pagead/managed/js/activeview/current/reach_worklet.html:0
-[    3454ms] [ERROR] Attestation check for Attribution Reporting on https://ad.doubleclick.net failed. @ https://www.automationexercise.com/product_details/1:0
-[    3526ms] [LOG] no video @ https://s0.2mdn.net/sadbundle/8995501505629619256/js/combined.js:8
-[    3527ms] [ERROR] Access denied: Cross-origin restriction. @ https://s0.2mdn.net/sadbundle/8995501505629619256/js/combined.js:8
-[    3528ms] [LOG] 65 9 @ https://s0.2mdn.net/sadbundle/8995501505629619256/js/combined.js:8

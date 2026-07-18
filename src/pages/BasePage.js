@@ -78,7 +78,7 @@ export class BasePage {
    * @returns {Promise<this>}
    */
   async clickContinue() {
-    await this.continueBtn.click({ force: true });
+    await this.continueBtn.click();
     return this;
   }
 }

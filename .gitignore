@@ -1,18 +1,40 @@
+# Local environment variables and secrets
+.env
+.env.*
+!.env.example
 
-# Claude Code Local Overrides
+# Authentication state
+.auth/
+
+# Dependencies
+node_modules/
+
+# Playwright output
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+.playwright-mcp/
+
+# Allure output
+allure-results/
+allure-report/
+
+# Generated project files
+/Automation_Products_List.xlsx
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local agent settings
 .claude/settings.local.json
 
-
-
-# Playwright
-node_modules/
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
-/playwright/.auth/
-
-allure-report/
-allure-results/
-playwright-report/
-test-results/
+# IDE and operating-system files
+.idea/
+.DS_Store
+Thumbs.db

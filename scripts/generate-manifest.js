@@ -9,7 +9,10 @@ const SCAN_DIRS = [
   path.join(__dirname, '../src/pages'),
   path.join(__dirname, '../src/api')
 ]; 
-const MANIFEST_PATH = path.join(__dirname, '../.claude/pom-manifest.md');
+const MANIFEST_PATHS = [
+  path.join(__dirname, '../.codex/pom-manifest.md'),
+  path.join(__dirname, '../.claude/pom-manifest.md'),
+];
 
 /**
  * Recursive function to look inside a folder, find all files, and look inside any sub-folders.
@@ -43,8 +46,8 @@ function getAllFiles(dirPath, arrayOfFiles = []) {
  */
 function generateManifest() {
   // Start building the text that will be saved into the Markdown file
-  let manifestContent = '# Framework Manifest (Context Diet for Claude)\n\n';
-  manifestContent += '> **AI INSTRUCTION:** Read this file to understand available Page Objects and API Controllers. DO NOT scan the `src/` directory directly to save context tokens.\n\n';
+  let manifestContent = '# Framework Manifest (Codex and Claude)\n\n';
+  manifestContent += '> **AGENT INSTRUCTION:** Read this file to understand available Page Objects and API Controllers. Do not scan the entire `src/` directory when this manifest provides the required routing context.\n\n';
 
   // Loop over every configured directory path
   SCAN_DIRS.forEach(dirPath => {
@@ -114,17 +117,16 @@ function generateManifest() {
     });
   });
 
-  // --- STEP 3: SAVE THE FILE ---
-  // Ensure the `.claude/` folder actually exists before we try to save a file inside it
-  const claudeDir = path.dirname(MANIFEST_PATH);
-  if (!fs.existsSync(claudeDir)) {
-    // recursive: true creates parent folders if needed
-    fs.mkdirSync(claudeDir, { recursive: true }); 
-  }
+  // Keep Codex and Claude manifests synchronized for both agent integrations.
+  MANIFEST_PATHS.forEach((manifestPath) => {
+    const manifestDir = path.dirname(manifestPath);
+    if (!fs.existsSync(manifestDir)) {
+      fs.mkdirSync(manifestDir, { recursive: true });
+    }
 
-  // Write all the text we built into the final .md file
-  fs.writeFileSync(MANIFEST_PATH, manifestContent);
-  console.log(`Unified Framework Manifest generated successfully at: ${MANIFEST_PATH}`);
+    fs.writeFileSync(manifestPath, manifestContent);
+    console.log(`Unified Framework Manifest generated successfully at: ${manifestPath}`);
+  });
 }
 
 // Trigger the main function to run the script

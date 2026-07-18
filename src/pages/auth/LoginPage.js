@@ -32,11 +32,12 @@ export class LoginPage extends BasePage {
    * Handles both positive and negative entry workflows.
    * @param {string} emailAddress
    * @param {string} password
+   * @returns {Promise<this>}
    */
   async submitLoginDetails(emailAddress, password) {
     await this.emailInput.fill(emailAddress);
     await this.passwordInput.fill(password);
-    await this.loginButton.click({ force: true });
+    await this.loginButton.click();
     return this;
   }
 

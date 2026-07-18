@@ -8,14 +8,8 @@ if (!process.env.CI) {
   dotenv.config({ path: "./.env" });
 }
 
-// Load ROUTING DATA (URLs, timeouts) dynamically based on TEST_ENV
+// Load routing data and optional CI overrides based on TEST_ENV.
 const envConfig = EnvResolver.getConfig();
-
-if (!envConfig.BASE_URL) {
-  throw new Error(
-    "CRITICAL: BASE_URL is not defined. Please check your environment config JSON.",
-  );
-}
 
 module.exports = defineConfig({
   timeout: envConfig.TIMEOUT || 60 * 1000,
@@ -58,9 +52,12 @@ module.exports = defineConfig({
     {
       name: "api",
       testMatch: /.*\.api\.spec\.js/,
+      use: {
+        baseURL: envConfig.API_URL,
+      },
     },
 
-    // Setup Project: Runs your auth.setup.js file first
+    // Setup Project: Runs tests/setup/auth.setup.js first.
     {
       name: "setup",
       testMatch: /.*\.setup\.js/,
@@ -70,7 +67,7 @@ module.exports = defineConfig({
       name: "chromium",
       // UI Browsers (Wait for setup, inject state, strictly ignore API, visual, and noauth files)
       testIgnore: [
-        "**/api-hybrid/**",
+        "**/api/**",
         "**/visual/**",
         "**/*.noauth.spec.js", // <-- AUTOMATIC ESCAPE HATCH
       ],
@@ -81,19 +78,19 @@ module.exports = defineConfig({
       dependencies: ["setup"],
     },
 
-    // {
-    //   name: "firefox",
-    //   testIgnore: [
-    //     "**/api-hybrid/**",
-    //     "**/visual/**",
-    //     "**/*.noauth.spec.js", // <-- AUTOMATIC ESCAPE HATCH
-    //   ],
-    //   use: {
-    //     ...devices["Desktop Firefox"],
-    //     storageState: ".auth/user.json",
-    //   },
-    //   dependencies: ["setup"],
-    // },
+    {
+      name: "firefox",
+      testIgnore: [
+        "**/api/**",
+        "**/visual/**",
+        "**/*.noauth.spec.js",
+      ],
+      use: {
+        ...devices["Desktop Firefox"],
+        storageState: ".auth/user.json",
+      },
+      dependencies: ["setup"],
+    },
 
     // Fresh-context project: no auth setup, no pre-loaded storageState.
     // Automatically routes any file ending in .noauth.spec.js here.

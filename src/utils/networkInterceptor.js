@@ -42,17 +42,4 @@ export async function blockAds(page) {
       await route.continue();
     }
   });
-
-  // Inject CSS once per page navigation to disable pointer events on all
-  // iframes. Ad-network iframes that survive the domain blocklist above are
-  // zero-size overlays in the z-order; pointer-events:none prevents them from
-  // intercepting clicks on buttons/links beneath them without causing any
-  // layout shift or element-stability issues.
-  await page.addInitScript(() => {
-    document.addEventListener("DOMContentLoaded", () => {
-      const style = document.createElement("style");
-      style.textContent = "iframe { pointer-events: none !important; }";
-      document.head.appendChild(style);
-    });
-  });
 }

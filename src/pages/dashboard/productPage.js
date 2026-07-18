@@ -20,6 +20,8 @@ export class ProductPage extends BasePage {
     this.detailsProductName = page.locator(".product-information h2");
     this.detailsProductPrice = page.locator(".product-information span span");
     this.allProductsHeading = page.getByRole("heading", { name: "All Products" });
+    this.searchInput = page.getByPlaceholder("Search Product");
+    this.searchButton = page.locator("#submit_search");
 
     /**
      * "Brands" h2 heading in the left sidebar on the Products page.
@@ -55,6 +57,7 @@ export class ProductPage extends BasePage {
   async navigateToProductsPage() {
     await this.productsPageLink.click();
     await this.allProductsHeading.waitFor({ state: "visible" });
+    await this.page.waitForLoadState("load");
     return this;
   }
 
@@ -129,10 +132,10 @@ export class ProductPage extends BasePage {
    * @returns {Promise<this>}
    */
   async searchForProduct(searchTerm) {
-    // Navigate directly to the search results URL instead of clicking the
-    // submit button, which is blocked by ad iframes on this site.
-    await this.page.goto(`/products?search=${encodeURIComponent(searchTerm)}`);
+    await this.searchInput.fill(searchTerm);
+    await this.searchButton.click();
     await this.searchedProductsHeading.waitFor({ state: "visible" });
+    await this.page.waitForLoadState("load");
     return this;
   }
 
@@ -165,9 +168,8 @@ export class ProductPage extends BasePage {
   }
 
   /**
-   * Adds every product in the current results to the cart by dispatching
-   * click events and dismissing the "Continue Shopping" modal between each.
-   * Uses dispatchEvent to bypass ad-iframe pointer-event interception.
+   * Adds every product in the current results to the cart and dismisses the
+   * "Continue Shopping" modal between each product.
    * @returns {Promise<this>}
    */
   async addAllSearchedProductsToCart() {
@@ -177,21 +179,15 @@ export class ProductPage extends BasePage {
       name: "Continue Shopping",
     });
     for (let i = 0; i < count; i++) {
-      await addBtns.nth(i).dispatchEvent("click");
+      await addBtns.nth(i).click();
       await continueBtn.waitFor({ state: "visible" });
-      // force: true skips the re-check so Bootstrap fade animation does not
-      // cause a "not visible" failure between waitFor and click.
-      await continueBtn.click({ force: true });
+      await continueBtn.click();
     }
     return this;
   }
 
   /**
-   * Adds the product at the given 0-based index to the cart by dispatching a
-   * click event directly on the Add to cart button inside `.productinfo`.
-   *
-   * Uses dispatchEvent to bypass ad iframes that intercept pointer events on
-   * brand/category listing pages.
+   * Adds the product at the given 0-based index using its visible cart button.
    *
    * @param {number} index - 0-based product index on the current page.
    * @returns {Promise<this>}
@@ -202,7 +198,7 @@ export class ProductPage extends BasePage {
       .nth(index);
     await this.page.waitForLoadState("domcontentloaded");
     await addToCartBtn.scrollIntoViewIfNeeded();
-    await addToCartBtn.dispatchEvent("click");
+    await addToCartBtn.click();
     return this;
   }
 }

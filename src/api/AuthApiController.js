@@ -17,7 +17,8 @@ export class AuthApiController extends BaseApiController {
    */
   async verifyLogin(email, password) {
     return await this.request.post(`/api/verifyLogin`, {
-      form: { email, password }
+      form: { email, password },
+      headers: this.defaultHeaders,
     });
   }
 
@@ -28,7 +29,8 @@ export class AuthApiController extends BaseApiController {
    */
   async verifyLoginWithoutEmail(password) {
     return await this.request.post(`/api/verifyLogin`, {
-      form: { password }
+      form: { password },
+      headers: this.defaultHeaders,
     });
   }
 
@@ -37,6 +39,8 @@ export class AuthApiController extends BaseApiController {
    * @returns {Promise<import('@playwright/test').APIResponse>} The raw API response.
    */
   async deleteVerifyLogin() {
-    return await this.request.delete(`/api/verifyLogin`);
+    return await this.request.delete(`/api/verifyLogin`, {
+      headers: this.defaultHeaders,
+    });
   }
 }

@@ -2,7 +2,6 @@
 import { expect } from "@playwright/test";
 import { BasePage } from "../BasePage.js";
 import { ALERTS } from "../../constants/message.js";
-import { preventFormSubmit } from "../../utils/formUtils.js";
 
 export class ContactUsPage extends BasePage {
   /**
@@ -37,6 +36,7 @@ export class ContactUsPage extends BasePage {
   async navigateToContactUsPage() {
     await this.contactUsLink.click();
     await this.contactHeaderText.waitFor({ state: "visible", timeout: 5000 });
+    await this.page.waitForLoadState("load");
     return this;
   }
 
@@ -72,24 +72,24 @@ export class ContactUsPage extends BasePage {
    * @returns {Promise<string>} The text content of the success message.
    */
   async submitAndGetSuccessMessage() {
-    // 1. Register the native dialog listener BEFORE clicking the trigger
-    this.page.once("dialog", async (dialog) => {
-      // Assert it's the correct native dialog type and message
-      expect(dialog.type()).toBe("confirm");
-      expect(dialog.message()).toContain(ALERTS.CONTACT_CONFIRM);
-      
-      // Native equivalent of a user clicking "OK"
-      await dialog.accept(); 
+    const dialogHandled = new Promise((resolve, reject) => {
+      this.page.once("dialog", async (dialog) => {
+        try {
+          expect(dialog.type()).toBe("confirm");
+          expect(dialog.message()).toContain(ALERTS.CONTACT_CONFIRM);
+          await dialog.accept();
+          resolve(undefined);
+        } catch (error) {
+          reject(error);
+        }
+      });
     });
 
-    // 2. Trigger the submit. This fires the dialog, and upon accept, posts the form.
     await this.submitBtn.scrollIntoViewIfNeeded();
-    await this.submitBtn.click();
+    await Promise.all([this.submitBtn.click(), dialogHandled]);
 
-    // 3. Pure event-driven wait. Playwright automatically waits for the page 
-    // to post back and the success banner to attach to the new DOM.
     await this.successSubmitText.waitFor({ state: "visible" });
-    
+
     const message = await this.successSubmitText.textContent();
     return message ? message.trim() : "";
   }

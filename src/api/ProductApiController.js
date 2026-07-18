@@ -6,46 +6,62 @@ export class ProductApiController extends BaseApiController {
    * @param {import('@playwright/test').APIRequestContext} request
    */
   constructor(request) {
-    super(request); // This passes the request context up to the Base class
+    super(request);
   }
 
+  /**
+   * @returns {Promise<import('@playwright/test').APIResponse>}
+   */
   async getAllProducts() {
-    return await this.request.get(`/api/productsList`, { 
-      headers: this.defaultHeaders 
-    });
-  }
-
-  async postToProductsList() {
-    return await this.request.post(`/api/productsList`, { 
-      headers: this.defaultHeaders 
-    });
-  }
-
-  async getAllBrands() {
-    return await this.request.get(`/api/brandsList`, { 
-      headers: this.defaultHeaders 
-    });
-  }
-
-  async putToBrandsList() {
-    return await this.request.put(`/api/brandsList`, {
-      headers: this.defaultHeaders
+    return await this.request.get("/api/productsList", {
+      headers: this.defaultHeaders,
     });
   }
 
   /**
-   * 
-   * @param {String} searchTerm 
-   * @returns 
+   * @returns {Promise<import('@playwright/test').APIResponse>}
    */
-
-  async searchProduct(searchTerm) {
-    return await this.request.post(`/api/searchProduct`, {
-      form: { search_product: searchTerm }
+  async postToProductsList() {
+    return await this.request.post("/api/productsList", {
+      headers: this.defaultHeaders,
     });
   }
 
+  /**
+   * @returns {Promise<import('@playwright/test').APIResponse>}
+   */
+  async getAllBrands() {
+    return await this.request.get("/api/brandsList", {
+      headers: this.defaultHeaders,
+    });
+  }
+
+  /**
+   * @returns {Promise<import('@playwright/test').APIResponse>}
+   */
+  async putToBrandsList() {
+    return await this.request.put("/api/brandsList", {
+      headers: this.defaultHeaders,
+    });
+  }
+
+  /**
+   * @param {string} searchTerm
+   * @returns {Promise<import('@playwright/test').APIResponse>}
+   */
+  async searchProduct(searchTerm) {
+    return await this.request.post("/api/searchProduct", {
+      form: { search_product: searchTerm },
+      headers: this.defaultHeaders,
+    });
+  }
+
+  /**
+   * @returns {Promise<import('@playwright/test').APIResponse>}
+   */
   async searchProductWithNoParam() {
-    return await this.request.post(`/api/searchProduct`);
+    return await this.request.post("/api/searchProduct", {
+      headers: this.defaultHeaders,
+    });
   }
 }

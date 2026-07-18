@@ -15,8 +15,8 @@
     "report:clean": "npx rimraf allure-results allure-report blob-report playwright-report",
     "report:generate": "npx allure generate allure-results --clean -o allure-report",
     "report:open": "npx allure open allure-report",
-    "test:visual": "npx playwright test --project=chromium tests/visual/",
-    "test:visual-update": "npx playwright test --project=chromium tests/visual/ --update-snapshots",
+    "test:visual": "npx playwright test --config=playwright.visual.config.js --project=chromium",
+    "test:visual-update": "npx playwright test --config=playwright.visual.config.js --project=chromium --update-snapshots",
      "manifest:generate": "node scripts/generate-manifest.js",
      "test:noauth": "npx playwright test --project=chromium-noauth"
   },
